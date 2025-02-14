@@ -3,8 +3,11 @@ from flask_cors import CORS
 from config.config import Config
 from database import init_db
 from extensions import mongo
+import os
+from dotenv import load_dotenv
 
 def create_app():
+    load_dotenv()  # Load environment variables
     app = Flask(__name__)
     app.config.from_object(Config)
 
@@ -23,8 +26,8 @@ def create_app():
         }
     })
 
-    # Configure MongoDB with proper connection settings
-    app.config["MONGO_URI"] = "mongodb://localhost:27017/tutordb?directConnection=true&serverSelectionTimeoutMS=2000"
+    # Configure MongoDB with Atlas connection string from environment variable
+    app.config["MONGO_URI"] = os.getenv('MONGO_URI')
     mongo.init_app(app)
 
     # Test MongoDB connection
