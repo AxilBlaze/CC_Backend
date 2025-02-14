@@ -1,28 +1,17 @@
 from flask import Blueprint, request, jsonify
-from models.course import Course
-from app import mongo
 from bson import ObjectId
+from extensions import mongo
 
-course_bp = Blueprint('course_bp', __name__)
+course_bp = Blueprint('courses', __name__)
 
 @course_bp.route('/', methods=['GET'])
 def get_courses():
-    # Get query parameters for filtering
-    difficulty = request.args.get('difficulty')
-    topic = request.args.get('topic')
-    
-    # Build query
-    query = {}
-    if difficulty:
-        query['difficulty_level'] = difficulty
-    if topic:
-        query['topics'] = topic
-    
-    courses = list(mongo.db.courses.find(query))
+    courses = mongo.db.courses.find()
+    course_list = []
     for course in courses:
         course['_id'] = str(course['_id'])
-    
-    return jsonify(courses), 200
+        course_list.append(course)
+    return jsonify(course_list)
 
 @course_bp.route('/<course_id>', methods=['GET'])
 def get_course(course_id):

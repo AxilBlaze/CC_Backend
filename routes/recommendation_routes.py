@@ -1,7 +1,7 @@
 from flask import Blueprint, request, jsonify
 from services.recommendation_service import RecommendationService
-from app import mongo
 from bson import ObjectId
+from extensions import mongo
 from datetime import datetime
 
 recommendation_bp = Blueprint('recommendation_bp', __name__)

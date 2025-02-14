@@ -1,7 +1,8 @@
 from flask import Flask
 from flask_cors import CORS
 from config.config import Config
-from database import mongo, init_db
+from database import init_db
+from extensions import mongo
 
 def create_app():
     app = Flask(__name__)
@@ -21,6 +22,18 @@ def create_app():
             "supports_credentials": True
         }
     })
+
+    # Configure MongoDB with proper connection settings
+    app.config["MONGO_URI"] = "mongodb://localhost:27017/tutordb?directConnection=true&serverSelectionTimeoutMS=2000"
+    mongo.init_app(app)
+
+    # Test MongoDB connection
+    try:
+        # The ping command is cheap and does not require auth
+        mongo.db.command('ping')
+        print("MongoDB connection successful!")
+    except Exception as e:
+        print(f"MongoDB connection error: {e}")
 
     # Initialize database
     init_db(app)
